@@ -16,16 +16,18 @@
                     "samples": []
                 },
                 {
-                    "name": "HelloWorldIntent",
-                    "slots": [],
+                    "name": "WriteNameIntent",
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "AMAZON.Person"
+                        }
+                    ],
                     "samples": [
-                        "hello",
-                        "how are you",
-                        "say hi world",
-                        "say hi",
-                        "hi",
-                        "say hello world",
-                        "say hello"
+                        " {Name} ",
+                        " {Name} です",
+                        "名前は {Name} ",
+                        "名前は {Name} です"
                     ]
                 },
                 {
@@ -36,5 +38,4 @@
             "types": []
         }
     }
-  }
-  
+}

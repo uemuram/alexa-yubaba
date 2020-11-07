@@ -3,25 +3,51 @@
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
 
+// 起動時
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome, you can say Hello or Help. Which would you like to try?';
+        const speakOutput = ''
+            + '<speak>'
+            + 'ようこそ。このスキルでは、経営者に名前を奪われる主人公の気持ちを味わえます。'
+            + '経営者のセリフの後に、あなたの名前を教えてください。では、始めます。'
+            + '<break time="1200ms"/>'
+            + '<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>'
+            + '</speak>';
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
+            .reprompt('<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>')
             .getResponse();
     }
 };
-const HelloWorldIntentHandler = {
+
+// 契約書に名前を書く
+const WriteNameIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'HelloWorldIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'WriteNameIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'Hello World!';
+
+        // スロット値を取得
+        const name = Alexa.getSlotValue(handlerInput.requestEnvelope, 'Name');
+        console.log('スロット値(Name) : ' + name);
+
+        //ランダムに一文字抽出する
+        const idx = Math.floor(Math.random() * name.length);
+        const newName = name.substring(idx, idx + 1);
+        console.log('newName : ' + newName);
+
+        // 返事を組み立て
+        const speakOutput = `
+            <speak><prosody pitch="low" rate="90%">
+                フン。${name}というのかい。贅沢な名だねぇ。
+                今からお前の名前は${newName}だ。いいかい、${newName}だよ。分かったら返事をするんだ、${newName}!!
+            </prosody></speak>
+        `;
+
         return handlerInput.responseBuilder
             .speak(speakOutput)
             //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
@@ -121,7 +147,7 @@ const RequestLog = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
-        HelloWorldIntentHandler,
+        WriteNameIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
