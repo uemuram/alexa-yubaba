@@ -49,7 +49,7 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
-        const speakOutput = 'Goodbye!';
+        const speakOutput = 'ご利用ありがとうございました。';
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
@@ -74,8 +74,7 @@ const IntentReflectorHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest';
     },
     handle(handlerInput) {
-        const intentName = Alexa.getIntentName(handlerInput.requestEnvelope);
-        const speakOutput = `You just triggered ${intentName}`;
+        const speakOutput = `想定外の呼び出しが発生しました。もう一度お試しください。`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -93,12 +92,26 @@ const ErrorHandler = {
     },
     handle(handlerInput, error) {
         console.log(`~~~~ Error handled: ${error.stack}`);
-        const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
+        const speakOutput = `エラーが発生しました。もう一度お試しください。`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
             .getResponse();
+    }
+};
+
+// リクエストインターセプター(エラー調査用)
+const RequestLog = {
+    process(handlerInput) {
+        //console.log("REQUEST ENVELOPE = " + JSON.stringify(handlerInput.requestEnvelope));
+        console.log("HANDLER INPUT = " + JSON.stringify(handlerInput));
+        const requestType = Alexa.getRequestType(handlerInput.requestEnvelope);
+        console.log("REQUEST TYPE =  " + requestType);
+        if (requestType === 'IntentRequest') {
+            console.log("INTENT NAME =  " + Alexa.getIntentName(handlerInput.requestEnvelope));
+        }
+        return;
     }
 };
 
@@ -113,8 +126,9 @@ exports.handler = Alexa.SkillBuilders.custom()
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
         IntentReflectorHandler, // make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
-        ) 
+    )
     .addErrorHandlers(
         ErrorHandler,
-        )
+    )
+    .addRequestInterceptors(RequestLog)
     .lambda();
