@@ -25,6 +25,25 @@ const LaunchRequestHandler = {
     }
 };
 
+// 名前を奪う
+const StealNameIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && (
+                Alexa.getIntentName(handlerInput.requestEnvelope) === 'StealNameIntent'
+                || Alexa.getIntentName(handlerInput.requestEnvelope) === 'ConfirmRetryYesIntent'
+            );
+    },
+    handle(handlerInput) {
+        // 応答を組み立て
+        speakOutput = '<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>';
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
 // 契約書に名前を書く
 const WriteNameIntentHandler = {
     canHandle(handlerInput) {
@@ -44,15 +63,19 @@ const WriteNameIntentHandler = {
 
         // 返事を組み立て
         const speakOutput = `
-            <speak><prosody pitch="low" rate="90%">
-                フン。${name}というのかい。贅沢な名だねぇ。
-                今からお前の名前は${newName}だ。いいかい、${newName}だよ。分かったら返事をするんだ、${newName}!!
-            </prosody></speak>
+            <speak>
+                <prosody pitch="low" rate="90%">
+                    フン。${name}というのかい。贅沢な名だねぇ。
+                    今からお前の名前は${newName}だ。いいかい、${newName}だよ。分かったら返事をするんだ、${newName}!!
+                </prosody>
+                <break time="1200ms"/>
+                あなたの名前は${newName}になりました。もう一度試しますか?
+            </speak>
         `;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .reprompt('もう一度試しますか?')
             .getResponse();
     }
 };
@@ -74,7 +97,9 @@ const CancelAndStopIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && (Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
-                || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
+                || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
+                || Alexa.getIntentName(handlerInput.requestEnvelope) === 'ConfirmRetryNoIntent'
+            );
     },
     handle(handlerInput) {
         const speakOutput = 'ご利用ありがとうございました。';
@@ -149,6 +174,7 @@ const RequestLog = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
+        StealNameIntentHandler,
         WriteNameIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,

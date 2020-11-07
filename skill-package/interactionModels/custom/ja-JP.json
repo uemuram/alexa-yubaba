@@ -16,6 +16,42 @@
                     "samples": []
                 },
                 {
+                    "name": "StealNameIntent",
+                    "slots": [],
+                    "samples": [
+                        "名前を奪って"
+                    ]
+                },
+                {
+                    "name": "ConfirmRetryYesIntent",
+                    "slots": [],
+                    "samples": [
+                        "はい",
+                        "うん",
+                        "もう一度",
+                        "もう一回",
+                        "繰り返し",
+                        "試す",
+                        "試します",
+                        "もう一度試す",
+                        "もう一度試します",
+                        "もう一回試す",
+                        "もう一回試します"
+                    ]
+                },
+                {
+                    "name": "ConfirmRetryNoIntent",
+                    "slots": [],
+                    "samples": [
+                        "いいえ",
+                        "いえ",
+                        "試さない",
+                        "試しません",
+                        "繰り返さない",
+                        "繰り返しません"
+                    ]
+                },
+                {
                     "name": "WriteNameIntent",
                     "slots": [
                         {
