@@ -9,13 +9,15 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = ''
-            + '<speak>'
-            + 'ようこそ。このスキルでは、経営者に名前を奪われる主人公の気持ちを味わえます。'
-            + '経営者のセリフの後に、あなたの名前を教えてください。では、始めます。'
-            + '<break time="1200ms"/>'
-            + '<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>'
-            + '</speak>';
+        const speakOutput = `
+            <speak>
+                ようこそ。このスキルでは、経営者に名前を奪われる主人公の気持ちを味わえます。
+                経営者のセリフの後に、あなたの名前を教えてください。では、始めます。
+                <break time="1200ms"/>
+                <prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>
+            </speak>
+            `;
+
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt('<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>')
