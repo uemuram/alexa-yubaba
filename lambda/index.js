@@ -117,11 +117,18 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'You can say hello to me! How can I help?';
+        const speakOutput = ''
+            + 'これはジョークスキルです。'
+            + 'あなたは色々あって湯屋で働くことになりました。'
+            + 'それにあたり、あなたを雇った経営者に自分の名前を奪われ、支配されてしまいます。'
+            + 'スキルの指示に従って名前を伝えると、その名前を一文字だけ残してカットします。'
+            + '名前を奪われる主人公の気持ちを味わってみてください。'
+            + 'スキルの利用を続けますか?'
+            ;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
+            .reprompt('スキルの利用を続けますか?')
             .getResponse();
     }
 };
