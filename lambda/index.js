@@ -2,6 +2,9 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
+const Axios = require('axios');
+const AWS = require('aws-sdk');
+const API_URL = 'https://labs.goo.ne.jp/api/hiragana';
 
 // 起動時
 const LaunchRequestHandler = {
@@ -20,6 +23,7 @@ const LaunchRequestHandler = {
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .withSimpleCard('経営者より', '契約書だよ。そこに名前を書きな。')
             .reprompt('<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>')
             .getResponse();
     }
@@ -36,9 +40,10 @@ const StealNameIntentHandler = {
     },
     handle(handlerInput) {
         // 応答を組み立て
-        speakOutput = '<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>';
+        const speakOutput = '<prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>';
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .withSimpleCard('経営者より', '契約書だよ。そこに名前を書きな。')
             .reprompt(speakOutput)
             .getResponse();
     }
@@ -50,8 +55,7 @@ const WriteNameIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'WriteNameIntent';
     },
-    handle(handlerInput) {
-
+    async handle(handlerInput) {
         // スロット値を取得
         const name = Alexa.getSlotValue(handlerInput.requestEnvelope, 'Name');
         console.log('スロット値(Name) : ' + name);
@@ -61,20 +65,48 @@ const WriteNameIntentHandler = {
         const newName = name.substring(idx, idx + 1);
         console.log('newName : ' + newName);
 
+        // 抽出した一文字の読みを統一するためにひらがなに変換する
+        let newNameYomi;
+        try {
+            // API用のキーを取得
+            const ssm = new AWS.SSM();
+            const request = {
+                Name: 'ALEXA-WORDENC-GOOAPI-KEY',
+                WithDecryption: true
+            };
+            const response = await ssm.getParameter(request).promise();
+            const apiKey = response.Parameter.Value;
+
+            // ひらがな変換
+            const res = await Axios.post(API_URL, {
+                app_id: apiKey,
+                output_type: 'hiragana',
+                sentence: newName
+            });
+            newNameYomi = res.data.converted;
+            console.log(`newNameYomi : "${newNameYomi}"`);
+
+        } catch (error) {
+            throw new Error(`http get error: ${error}`);
+        }
+
         // 返事を組み立て
         const speakOutput = `
             <speak>
                 <prosody pitch="low" rate="90%">
                     フン。${name}というのかい。贅沢な名だねぇ。
-                    今からお前の名前は${newName}だ。いいかい、${newName}だよ。分かったら返事をするんだ、${newName}!!
+                    今からお前の名前は、${newNameYomi}だ。いいかい、${newNameYomi}だよ。分かったら返事をするんだ、${newNameYomi}!!
                 </prosody>
                 <break time="1200ms"/>
-                あなたの名前は${newName}になりました。もう一度試しますか?
+                あなたの名前は、${newNameYomi}になりました。もう一度試しますか?
             </speak>
         `;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .withSimpleCard('経営者より',
+                `フン。${name}というのかい。贅沢な名だねぇ。`
+                + `今からお前の名前は${newName}だ。いいかい、${newName}だよ。分かったら返事をするんだ、${newName}!!`)
             .reprompt('もう一度試しますか?')
             .getResponse();
     }
