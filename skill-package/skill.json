@@ -11,7 +11,7 @@
           "name": "名前泥棒",
           "smallIconUri": "https://uemuram.github.io/alexa-yubaba/icon108.png",
           "largeIconUri": "https://uemuram.github.io/alexa-yubaba/icon512.png",
-          "description": "※これはジョークスキルです。\n\nあなたは色々あって湯屋で働くことになりました。\nそのときの契約で、あなたを雇った経営者に自分の名前を奪われ、支配されてしまいます。\n\n\nスキルの指示に従って名前を伝えると、その名前を一文字だけ残してカットします。\n名前を奪われる主人公の気持ちを味わってみてください。"
+          "description": "※これはジョークスキルです。\n\nあなたは色々あって湯屋で働くことになりました。\nそのときの契約で、あなたは経営者に自分の名前を奪われ、支配されてしまいます。\n\n\nスキルの指示に従って名前を伝えると、その名前を一文字だけ残してカットします。\n名前を奪われる主人公の気持ちを味わってみてください。"
         }
       },
       "isAvailableWorldwide": false,

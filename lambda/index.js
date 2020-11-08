@@ -14,7 +14,7 @@ const LaunchRequestHandler = {
     handle(handlerInput) {
         const speakOutput = `
             <speak>
-                ようこそ。このスキルでは、経営者に名前を奪われる主人公の気持ちを味わえます。
+                ようこそ。このスキルでは、契約で名前を奪われる従業員の気持ちを味わえます。
                 経営者のセリフの後に、あなたの名前を教えてください。では、始めます。
                 <break time="1200ms"/>
                 <prosody pitch="low" rate="90%">契約書だよ。そこに名前を書きな。</prosody>
@@ -117,13 +117,15 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = ''
+        const speakOutput = '<speak>'
             + 'これはジョークスキルです。'
             + 'あなたは色々あって湯屋で働くことになりました。'
-            + 'そのときの契約で、あなたを雇った経営者に自分の名前を奪われ、支配されてしまいます。'
+            + 'そのときの契約で、あなたは経営者に自分の名前を奪われ、支配されてしまいます。'
             + 'スキルの指示に従って名前を伝えると、その名前を一文字だけ残してカットします。'
-            + '名前を奪われる主人公の気持ちを味わってみてください。'
+            + '名前を奪われる気持ちを味わってみてください。'
+            + '<break time="300ms"/>'
             + 'スキルの利用を続けますか?'
+            + '</speak>'
             ;
 
         return handlerInput.responseBuilder
